@@ -160,7 +160,7 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
   count = var.k8s_worker_count
 
   # General Options
-  name             = "k8s-worker-${count.index}${local.suffix}"
+  name             = "k8s-worker-${count.index}-${local.suffix}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   guest_id         = data.vsphere_virtual_machine.template.guest_id
