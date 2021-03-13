@@ -36,14 +36,14 @@ resource "vsphere_tag_category" "k8s_tags" {
 }
 
 resource "vsphere_tag" "groups" {
-  for_each = ["etcd", "k8s-cluster", "kube-node"]
+  for_each = toset(["etcd", "k8s-cluster", "kube-node"])
 
   name        = each.key
   category_id = vsphere_tag_category.k8s_tags.id
 }
 
 resource "vsphere_custom_attribute" "attributes" {
-  for_each = toset("etcd_member_name", "ansible_host", "ip", "access_ip", "ansible_user")
+  for_each = toset(["etcd_member_name", "ansible_host", "ip", "access_ip", "ansible_user"])
 
   name                = each.key
   managed_object_type = "VirtualMachine"
@@ -109,8 +109,8 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
       }
 
       ipv4_gateway    = var.k8s_default_gateway
-      dns_server_list = var.k8s_dns_server
-      dns_suffix_list = [var.internal_domain_name]
+      dns_server_list = var.k8s_dns_servers
+      dns_suffix_list = [var.cluster_domain_name]
     }
   }
 
@@ -176,8 +176,8 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
       }
 
       ipv4_gateway    = var.k8s_default_gateway
-      dns_server_list = var.k8s_dns_server
-      dns_suffix_list = [var.internal_domain_name]
+      dns_server_list = var.k8s_dns_servers
+      dns_suffix_list = [var.cluster_domain_name]
     }
   }
 
@@ -243,8 +243,8 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
       }
 
       ipv4_gateway    = var.k8s_default_gateway
-      dns_server_list = var.k8s_dns_server
-      dns_suffix_list = [var.internal_domain_name]
+      dns_server_list = var.k8s_dns_servers
+      dns_suffix_list = [var.cluster_domain_name]
     }
   }
 

@@ -36,7 +36,7 @@ variable "k8s_default_gateway" {
   description = "The default gateway for the hosts in the cluster."
 }
 
-variable "k8s_dns_server" {
+variable "k8s_dns_servers" {
   type        = list(string)
   description = "The DND Servers for the hosts in the cluster."
 }
