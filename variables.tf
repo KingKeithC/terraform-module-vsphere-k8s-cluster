@@ -1,7 +1,7 @@
 variable "suffix" {
   type        = string
-  default     = ""
-  description = "An optional string to append to the name of created objects."
+  default     = "main"
+  description = "An optional string to append to the name of created objects. Recommend setting to the name of a git branch."
 }
 
 variable "datacenter_name" {

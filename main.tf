@@ -1,6 +1,6 @@
 
 locals {
-  suffix = "-${lower(replace(var.suffix, "_", "-"))}"
+  suffix = "${lower(replace(var.suffix, "_", "-"))}"
 }
 
 data "vsphere_datacenter" "dc" {
@@ -28,7 +28,7 @@ data "vsphere_virtual_machine" "template" {
 }
 
 resource "vsphere_tag_category" "k8s_tags" {
-  name        = "category-${var.cluster_name}${local.suffix}"
+  name        = "category-${var.cluster_name}-${local.suffix}"
   description = "Tags for the ${var.cluster_name} Kubernetes Cluster (${local.suffix}) Managed by Terraform"
   cardinality = "MULTIPLE"
 
@@ -46,7 +46,7 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
   count = var.k8s_etcd_count
 
   # General Options
-  name             = "k8s-etcd-${count.index}${local.suffix}"
+  name             = "k8s-etcd-${count.index}-${local.suffix}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   guest_id         = data.vsphere_virtual_machine.template.guest_id
@@ -82,7 +82,7 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
 
     customize {
       linux_options {
-        host_name = "k8s-etcd-${count.index}${local.suffix}"
+        host_name = "k8s-etcd-${count.index}-${local.suffix}"
         domain    = var.cluster_domain_name
       }
 
@@ -103,7 +103,7 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
   count = var.k8s_master_count
 
   # General Options
-  name             = "k8s-master-${count.index}${local.suffix}"
+  name             = "k8s-master-${count.index}-${local.suffix}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   guest_id         = data.vsphere_virtual_machine.template.guest_id
@@ -139,7 +139,7 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
 
     customize {
       linux_options {
-        host_name = "k8s-master-${count.index}${local.suffix}"
+        host_name = "k8s-master-${count.index}-${local.suffix}"
         domain    = var.cluster_domain_name
       }
 
@@ -196,7 +196,7 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
 
     customize {
       linux_options {
-        host_name = "k8s-master-${count.index}${local.suffix}"
+        host_name = "k8s-master-${count.index}-${local.suffix}"
         domain    = var.cluster_domain_name
       }
 
