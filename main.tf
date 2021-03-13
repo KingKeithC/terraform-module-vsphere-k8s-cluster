@@ -1,6 +1,6 @@
 
 locals {
-  suffix = "${lower(replace(var.suffix, "_", "-"))}"
+  suffix = lower(replace(var.suffix, "_", "-"))
 }
 
 data "vsphere_datacenter" "dc" {
