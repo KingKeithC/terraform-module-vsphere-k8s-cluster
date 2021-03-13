@@ -36,7 +36,7 @@ resource "vsphere_tag_category" "k8s_tags" {
 }
 
 resource "vsphere_tag" "groups" {
-  for_each = toset(["etcd", "k8s-cluster", "kube-node"])
+  for_each = toset(compact(["etcd", "k8s-cluster", "kube-master", "kube-node", local.suffix]))
 
   name        = each.key
   category_id = vsphere_tag_category.k8s_tags.id
