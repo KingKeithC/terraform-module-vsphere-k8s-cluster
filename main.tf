@@ -42,13 +42,6 @@ resource "vsphere_tag" "groups" {
   category_id = vsphere_tag_category.k8s_tags.id
 }
 
-resource "vsphere_custom_attribute" "attributes" {
-  for_each = toset(["etcd_member_name", "ansible_host", "ip", "access_ip", "ansible_user"])
-
-  name                = each.key
-  managed_object_type = "VirtualMachine"
-}
-
 resource "vsphere_virtual_machine" "k8s_etcd_vms" {
   count = var.k8s_etcd_count
 
@@ -67,16 +60,6 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
     for tagname in compact(["etcd", local.suffix]) :
     vsphere_tag.groups[tagname].id
   ]
-
-  custom_attributes = {
-    for attr, value in {
-      etcd_member_name = "k8s-etcd-${count.index}${local.suffix}"
-      ansible_host     = cidrhost(var.k8s_vm_cidr_prefix, count.index)
-      ip               = cidrhost(var.k8s_vm_cidr_prefix, count.index)
-      access_ip        = cidrhost(var.k8s_vm_cidr_prefix, count.index)
-      ansible_user     = var.k8s_vm_template_user
-    } : vsphere_custom_attribute.attributes[attr].id => value
-  }
 
   # CPU and Memory
   num_cpus = 2
@@ -135,16 +118,6 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
     vsphere_tag.groups[tagname].id
   ]
 
-  custom_attributes = {
-    for attr, value in {
-      etcd_member_name = "k8s-master-${count.index}${local.suffix}"
-      ansible_host     = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count)
-      ip               = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count)
-      access_ip        = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count)
-      ansible_user     = var.k8s_vm_template_user
-    } : vsphere_custom_attribute.attributes[attr].id => value
-  }
-
   # CPU and Memory
   num_cpus = 2
   memory   = 4096
@@ -201,16 +174,6 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
     for tagname in compact(["k8s-cluster", "kube-node", local.suffix]) :
     vsphere_tag.groups[tagname].id
   ]
-
-  custom_attributes = {
-    for attr, value in {
-      etcd_member_name = "k8s-worker-${count.index}${local.suffix}"
-      ansible_host     = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count + var.k8s_master_count)
-      ip               = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count + var.k8s_master_count)
-      access_ip        = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count + var.k8s_master_count)
-      ansible_user     = var.k8s_vm_template_user
-    } : vsphere_custom_attribute.attributes[attr].id => value
-  }
 
   # CPU and Memory
   num_cpus = 2
