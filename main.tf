@@ -28,8 +28,8 @@ data "vsphere_virtual_machine" "template" {
 }
 
 resource "vsphere_tag_category" "k8s_tags" {
-  name        = "category-${cluster_name}${local.suffix}"
-  description = "Tags for the ${cluster_name} Kubernetes Cluster (${local.suffix}) Managed by Terraform"
+  name        = "category-${var.cluster_name}${local.suffix}"
+  description = "Tags for the ${var.cluster_name} Kubernetes Cluster (${local.suffix}) Managed by Terraform"
   cardinality = "MULTIPLE"
 
   associable_types = ["VirtualMachine", "Datastore"]
@@ -43,7 +43,7 @@ resource "vsphere_tag" "groups" {
 }
 
 resource "vsphere_custom_attribute" "attributes" {
-  for_each = ["etcd_member_name", "ansible_host", "ip", "access_ip", "ansible_user"]
+  for_each = toset("etcd_member_name", "ansible_host", "ip", "access_ip", "ansible_user")
 
   name                = each.key
   managed_object_type = "VirtualMachine"
