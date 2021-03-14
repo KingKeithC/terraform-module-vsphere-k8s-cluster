@@ -52,7 +52,7 @@ variable "k8s_network_name" {
 
 variable "k8s_etcd_count" {
   description = "The number of etcd nodes to place in the cluster."
-  default     = 1
+  default     = 2
 
   validation {
     condition     = var.k8s_etcd_count >= 1
