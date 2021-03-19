@@ -42,6 +42,11 @@ resource "vsphere_tag" "groups" {
   category_id = vsphere_tag_category.k8s_tags.id
 }
 
+resource "vsphere_custom_attribute" "k8s_mgmt_ip" {
+  name                = "k8s_mgmt_ip"
+  managed_object_type = "VirtualMachine"
+}
+
 resource "vsphere_virtual_machine" "k8s_etcd_vms" {
   count = var.k8s_etcd_count
 
@@ -60,6 +65,10 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
     for tagname in compact(["etcd", local.suffix]) :
     vsphere_tag.groups[tagname].id
   ]
+
+  custom_attributes = {
+    (vsphere_custom_attribute.k8s_mgmt_ip.id) = cidrhost(var.k8s_vm_cidr_prefix, count.index)
+  }
 
   # CPU and Memory
   num_cpus = 2
@@ -118,6 +127,10 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
     vsphere_tag.groups[tagname].id
   ]
 
+  custom_attributes = {
+    (vsphere_custom_attribute.k8s_mgmt_ip.id) = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count)
+  }
+
   # CPU and Memory
   num_cpus = 2
   memory   = 4096
@@ -174,6 +187,10 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
     for tagname in compact(["k8s-cluster", "kube-node", local.suffix]) :
     vsphere_tag.groups[tagname].id
   ]
+
+  custom_attributes = {
+    (vsphere_custom_attribute.k8s_mgmt_ip.id) = cidrhost(var.k8s_vm_cidr_prefix, count.index + var.k8s_etcd_count + var.k8s_master_count)
+  }
 
   # CPU and Memory
   num_cpus = 2
