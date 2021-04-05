@@ -50,6 +50,16 @@ variable "k8s_network_name" {
   description = "The name of the network on which to connect the k8s-nodes."
 }
 
+variable "k8s_vm_cpus" {
+  description = "The amount of CPUs to add to each VM."
+  default     = 2
+}
+
+variable "k8s_vm_memory" {
+  description = "The amount of Memory in MB to add to each VM."
+  default     = 4096
+}
+
 variable "k8s_etcd_count" {
   description = "The number of etcd nodes to place in the cluster."
   default     = 2

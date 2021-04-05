@@ -71,8 +71,8 @@ resource "vsphere_virtual_machine" "k8s_etcd_vms" {
   }
 
   # CPU and Memory
-  num_cpus = 2
-  memory   = 4096
+  num_cpus = var.k8s_vm_cpus
+  memory   = var.k8s_vm_memory
 
   # VMWare Tools Options
   sync_time_with_host = true
@@ -132,8 +132,8 @@ resource "vsphere_virtual_machine" "k8s_master_vms" {
   }
 
   # CPU and Memory
-  num_cpus = 2
-  memory   = 4096
+  num_cpus = var.k8s_vm_cpus
+  memory   = var.k8s_vm_memory
 
   # VMWare Tools Options
   sync_time_with_host = true
@@ -193,8 +193,8 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
   }
 
   # CPU and Memory
-  num_cpus = 2
-  memory   = 4096
+  num_cpus = var.k8s_vm_cpus
+  memory   = var.k8s_vm_memory
 
   # VMWare Tools Options
   sync_time_with_host = true
