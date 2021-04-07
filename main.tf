@@ -208,6 +208,11 @@ resource "vsphere_virtual_machine" "k8s_worker_vms" {
     size  = 50
   }
 
+  disk {
+    label = "disk1"
+    size  = 30
+  }
+
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
 
